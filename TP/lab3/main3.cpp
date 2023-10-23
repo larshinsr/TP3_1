@@ -1,4 +1,4 @@
-#include "BinaryTree.h"
+#include "BinaryTree.t.h"
 #include <iostream>
 
 
@@ -13,25 +13,25 @@ int main() {
     tree.insert(2);
     tree.insert(4);
     tree.insert(7);
-    tree.insert(9);
+    tree.insert(9); 
 
-    std::cout << "Дерево в порядке предварительного обхода: ";
-    tree.printPreOrder();  // Вывод в порядке предварительного обхода
-
-    // Проверяем поиск элементов
-    int valueToFind = 3;
-    if (tree.search(valueToFind)) {
-        std::cout << valueToFind << " найден в дереве." << std::endl;
-    } else {
-        std::cout << valueToFind << " не найден в дереве." << std::endl;
-    }
-
-    // Удаляем элемент
-    int valueToRemove = 5;
-    tree.remove(valueToRemove);
-
-    std::cout << "Дерево после удаления " << valueToRemove << ": ";
+    // Выводим дерево в порядке предварительного обхода
+    std::cout << "Binary Tree in Preorder: ";
     tree.printPreOrder();
+    std::cout << std::endl;
+
+    // Вызываем новый метод для поиска поддеревьев
+    int min_height = 2;
+    int max_height = 3;
+    std::vector<Subtree<int>> subtrees = tree.findSubtreesWithLeafHeightInRange(min_height, max_height);
+
+    // Выводим найденные поддеревья
+    std::cout << "Subtrees with leaf height in range [" << min_height << ", " << max_height << "]:\n";
+    for (const Subtree<int>& subtree : subtrees) {
+        std::cout << "Subtree Preorder: ";
+        tree.printPreOrder();
+        std::cout << std::endl;
+    }
 
     return 0;
 }
