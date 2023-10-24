@@ -15,7 +15,7 @@ class BinaryTree {
     public:
     struct Subtree {
         Node<T>* root;
-        Subtree(Node<T>* node) : root(node) {}
+        int max_depth{};
         };
 
     BinaryTree() : root(nullptr) {}
@@ -47,22 +47,23 @@ class BinaryTree {
         return result;
         }
 
-    void printSubtreePreOrder(Node<T>* node) {
+    void printSubtreePreOrder(Node<T>* node, int depth, int max_depth) {
+        if (depth > max_depth) return;
         if (node) {
             // Print the current node's value
-            /*for (int i = 0; i < depth; ++i) {
+            for (int i = 0; i < depth; ++i) {
                 std::cout << "  "; // Indent for hierarchy
-            }*/
-            std::cout << node->data << ' ';
+                }
+            std::cout << node->data << '\n';
 
             // Print left and right subtrees with increased depth
-            printSubtreePreOrder(node->left);
-            printSubtreePreOrder(node->right);
+            printSubtreePreOrder(node->left, depth + 1, max_depth);
+            printSubtreePreOrder(node->right, depth + 1, max_depth);
             }
         }
 
-    private:
     Node<T>* root;
+    private:
 
     void destroyTree(Node<T>* node) {
         if (node) {
@@ -141,14 +142,20 @@ class BinaryTree {
             printPreOrder(node->right);
             }
         }
-
+    bool isLeaf(Node<T>* node){
+        if (node->left == nullptr || node->right == nullptr){
+            return true;
+        }
+        else 
+            return false;
+    }
     void findSubtreesWithLeafHeightInRange(Node<T>* node, int current_height, int min_height, int max_height, std::vector<Subtree>& result) {
         if (node == nullptr) {
             return;
             }
 
-        if (current_height >= min_height && current_height <= max_height) {
-            Subtree subtree(node);
+        if (current_height >= min_height && current_height <= max_height && isLeaf(node)/* (node->left==nullptr && node->right==nullptr)*/) {
+            Subtree subtree{ node, max_height - current_height };
             result.push_back(subtree);
             }
         if (current_height < max_height) {
@@ -181,18 +188,19 @@ int main() {
     tree.insert(15);
     tree.insert(0);
 
-    std::cout << "Binary Tree in Preorder: ";
-    tree.printPreOrder();
+    std::cout << "Binary Tree in Preorder: \n";
+    tree.printSubtreePreOrder(tree.root, 0, 1000);
+
     std::cout << std::endl;
 
-    int min_height = 1;
-    int max_height = 2;
+    int min_height = 2;
+    int max_height = 3;
     std::vector<BinaryTree<int>::Subtree> subtrees = tree.findSubtreesWithLeafHeightInRange(min_height, max_height);
 
     std::cout << "Subtrees with leaf height in range [" << min_height << ", " << max_height << "]:\n";
     for (const BinaryTree<int>::Subtree& subtree : subtrees) {
-        std::cout << "Subtree Preorder: ";
-        tree.printSubtreePreOrder(subtree.root);
+        std::cout << "Subtree Preorder: \n";
+        tree.printSubtreePreOrder(subtree.root, 0, subtree.max_depth);
         std::cout << std::endl;
         }
 
